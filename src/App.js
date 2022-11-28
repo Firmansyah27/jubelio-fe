@@ -7,7 +7,7 @@ import Container from './views/container';
 
 const App = ()=> {
   return (
-    <div className='App'>
+    <div className='App' style={{ paddingBottom: 100}}>
       <h1>Products</h1>
 
       <nav>

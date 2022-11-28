@@ -1,6 +1,7 @@
 import React,{ useState, useContext, useRef } from 'react';
 import "../css/home.css"
 import CustomCard from "../component/card";
+import CustomCard2 from "../component/card2";
 import classNames from "classnames";
 import InfiniteScroll from "react-infinite-scroller";
 import { StoreContext } from "../store.context";
@@ -9,6 +10,7 @@ import { makeStyles } from '@mui/styles';
 import Modal from 'react-modal';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
+import logo from '../assets/image/loading.gif'
 
 const customStyles = {
   content: {
@@ -54,15 +56,17 @@ const Home = ()=>  {
   const modalRef = useRef(null);
 
   const handleLoadMore = async ()=> {
-    const res = await productStore.getListProducts({page, limit})
-    setData(data.concat(res.products))
-    const total = res.counts[0].count
-    const rest = total - (limit * page)
-    if(rest > 0 ) {
-      setPage(page +1 )
-    } else {
-      setHasMore(false)
-    }
+    setTimeout(async ()=> {
+        const res = await productStore.getListProducts({page, limit})
+        setData(data.concat(res.products))
+        const total = res.counts[0].count
+        const rest = total - (limit * page)
+        if(rest > 0 ) {
+          setPage(page +1 )
+        } else {
+          setHasMore(false)
+        }
+    }, 3000);
   }
 
   const handleOnlickCard = async (product)=> {
@@ -176,24 +180,21 @@ const Home = ()=>  {
               hasMore={hasMore}
               loader={
                 <div className="loader" key={0}>
-                  Loading ...
+                  <img src={logo} alt="loading..." />
                 </div>
               }
             >
-              <Grid container spacing={4} style={{paddingTop: "30px", width: "100%"}}>
+              <Grid container spacing={4} style={{paddingTop: "30px", width: "100%", display: 'flex'}}>
                 {data.map((product, i) => (
-                  <Grid key={i} item xs={12} sm={6} md={4} lg={3}>
-                    <Card onClick={()=> handleOnlickCard(product)}>
-                      <CustomCard
-                        title={product.name}
-                        images={product.image}
-                        // old_price="9,999"  
-                        newPrice={product.price}
-                        dollar="Rp."
-                        alt="batman"
-                        // exp_date="10-08-2022"
-                      />
-                    </Card>
+                  <Grid key={i} item xs={12} sm={6} md={4} lg={3} style={{display: 'flex'}}>
+                    <CustomCard2
+                      onClick={()=> handleOnlickCard(product)}
+                      style={{width: "100%", maxWidth: 250}}
+                      name={product.name}
+                      image={product.image}
+                      price={product.price}
+                      description={product.description}
+                    />
                   </Grid>
                 ))}
               </Grid>
@@ -340,7 +341,7 @@ const Home = ()=>  {
                     <div style={{marginTop:10}} className="row">
                       <div className="column">
                         <Button variant="contained" color="primary" type="submit">
-                          Update
+                          {action == "create"? "Create" : "Update"}
                         </Button>
                       </div>
                       <div className="column">
